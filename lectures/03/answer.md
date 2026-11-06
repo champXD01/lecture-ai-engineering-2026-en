@@ -2,10 +2,66 @@
 
 ## Exercises
 
-- Differences between the Lecture 01 (bare LLM) and agent answers:
-- Tool calls shown by `--trace` (tool names and arguments):
-- Number of LLM calls for one question (`requests`):
-- Tool added and the description in its docstring:
+### 1. Differences between the Lecture 01 (bare LLM) and agent answers
+
+- In Lecture 01, the bare LLM generated answers directly using its pretrained knowledge and the context provided in the prompt. It did not independently retrieve information from external tools.
+- In Lecture 03, the AI agent follows a tool-based approach. It understands the user's question, selects an appropriate tool, executes it, processes the returned information and generates a final answer.
+- For example, when asked about LoRA, the agent calls `search_glossary` to retrieve the definition and related information from the course glossary.
+- Similarly, when asked about Lecture 03, the agent calls `get_lecture_summary` to retrieve the relevant lecture content.
+- Therefore, the main difference is that the agent can retrieve course-specific information using tools instead of relying only on the LLM's pretrained knowledge.
+
+### 2. Tool calls shown by `--trace` (tool names and arguments)
+
+The `--trace` experiments showed the following tool calls:
+
+**Experiment 1: Question – "What is LoRA?"**
+
+- Tool called: `search_glossary`
+- Argument: `query="LoRA"`
+- Returned information: Definition of LoRA, the lecture in which it was covered and related terms.
+
+**Experiment 2: Question – "What do we learn in Lecture 3?"**
+
+- Tool called: `get_lecture_summary`
+- Argument: `lecture=3`
+- Returned information: Lecture 03 summary, including its aims, key concepts and exercises.
+
+The traces demonstrate how the agent selects the appropriate tool and passes the required arguments depending on the user's question.
+
+### 3. Number of LLM calls for one question (`requests`)
+
+The usage information obtained from both experiments was:
+
+| Experiment | LLM requests | Tool calls |
+|---|---:|---:|
+| What is LoRA? | 2 | 1 |
+| What do we learn in Lecture 3? | 2 | 1 |
+
+For both experiments, the agent made two LLM requests and one tool call.
+
+The first LLM request was used to determine the appropriate tool and its arguments. After the tool returned the requested information, the second LLM request generated the final response.
+
+This demonstrates that the number of LLM requests and the number of tool calls are different. A single tool call can be part of a process involving multiple LLM requests.
+
+### 4. Tool added and the description in its docstring
+
+The additional tool implemented for Lecture 03 is `get_lecture_summary`.
+
+Function signature:
+
+`def get_lecture_summary(lecture: int) -> str:`
+
+Its docstring is:
+
+> Return key points from the specified session (an integer starting at 1).
+>
+> Use when asked about session content or relationships, such as "What will we learn in Lecture 03?".
+
+The tool retrieves the corresponding lecture Markdown file from the data directory and returns its contents.
+
+The docstring explains the purpose of the tool, its expected argument and the situations in which the model should use it.
+
+This tool allows the agent to answer lecture-specific questions using the actual course material rather than relying only on its pretrained knowledge.
 
 
 
