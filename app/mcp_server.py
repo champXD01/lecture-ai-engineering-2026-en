@@ -28,7 +28,7 @@ server = MCPServer(
 server.tool()(tools.search_glossary)
 
 # TODO(Basic homework): expose get_lecture_summary as well
-
+server.tool()(tools.get_lecture_summary)
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Glossary MCP server")
